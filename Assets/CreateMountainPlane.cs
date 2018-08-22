@@ -17,6 +17,7 @@ public class CreateMountainPlane : MonoBehaviour {
         Vector3 bl = new Vector3(-1.0f, 0.0f, -1.0f);
         Vector3 br = new Vector3(1.0f, 0.0f, -1.0f);
         List < Vector3 > vertices = diamondSquare(iterations, tl, tr, bl, br);
+        vertices.ForEach((Vector3 obj) => print(obj.ToString()));
         // From Tut1
 
         // Add a MeshFilter component to this entity. This essentially comprises of a
@@ -51,7 +52,8 @@ public class CreateMountainPlane : MonoBehaviour {
         for (int i = 0; i < m.vertices.Length; i++)
         {
             triangles[i] = i;
-            colors[i] = Color.green;
+            float c = 0.5f * (m.vertices[i].y + variance);
+            colors[i] = new Color(c, c, c, 1.0f);
         }
 
         m.triangles = triangles;
@@ -99,6 +101,7 @@ public class CreateMountainPlane : MonoBehaviour {
             res.Add(mm);
             res.Add(br);
             res.Add(bm);
+
             return res;
         } else {
             List<Vector3> res = diamondSquare(nIterations - 1, tl, tm, ml, mm);
@@ -110,7 +113,7 @@ public class CreateMountainPlane : MonoBehaviour {
     }
 
     Vector3 square(Vector3 middle, Vector3 other1, Vector3 other2) {
-        if (other1.z == other2.z) {
+        if (Mathf.Abs(other1.z - other2.z) < 0.00001) {
             return new Vector3((other1.x + other2.x) / 2, avgRandom(middle, other1, other2), other1.z);
         } else {
             return new Vector3(other1.x, avgRandom(middle, other1, other2), (other1.z + other2.z) / 2);
@@ -118,7 +121,7 @@ public class CreateMountainPlane : MonoBehaviour {
     }
 
     Vector3 diamond(Vector3 tl, Vector3 tr, Vector3 bl, Vector3 br) {
-        return new Vector3((tr.x + tl.x) / 2, avgRandom(tl, tr, bl, br), (tr.z - br.z) / 2);
+        return new Vector3((tr.x + tl.x) / 2, avgRandom(tl, tr, bl, br), (tr.z + br.z) / 2);
     }
 
     float avgRandom(params Vector3[] inputs) {
