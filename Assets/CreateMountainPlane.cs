@@ -1,23 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CreateMountainPlane : MonoBehaviour {
+public class CreateMountainPlane : MonoBehaviour
+{
 
-    public int seed;
-    public float size;
+    public float sideLength;
     public float variance;
-    public int iterations;
+    private float actualVariance;
+    public int nIterations;
 
 
     // Use this for initialization
-    void Start() {
-        Vector3 tl = new Vector3(-1.0f, 0.0f, 1.0f);
-        Vector3 tr = new Vector3(1.0f, 0.0f, 1.0f);
-        Vector3 bl = new Vector3(-1.0f, 0.0f, -1.0f);
-        Vector3 br = new Vector3(1.0f, 0.0f, -1.0f);
-        List < Vector3 > vertices = diamondSquare(iterations, tl, tr, bl, br);
-        vertices.ForEach((Vector3 obj) => print(obj.ToString()));
+    void Start()
+    {
+        float[,] ys = DiamondSquare(nIterations);
+        for (int x = 0; x < ys.GetLength(0); x++)
+        {
+            for (int z = 0; z < ys.GetLength(0); z++)
+            {
+            }
+        }
+        List<Vector3> vertices = GenTriangles(ys, sideLength);
         // From Tut1
 
         // Add a MeshFilter component to this entity. This essentially comprises of a
@@ -28,21 +31,22 @@ public class CreateMountainPlane : MonoBehaviour {
 
         // Add a MeshRenderer component. This component actually renders the mesh that
         // is defined by the MeshFilter component.
-        MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
-        renderer.material.shader = Shader.Find("Unlit/VertexColorShader");
+        this.gameObject.AddComponent<MeshRenderer>().material.shader = Shader.Find("Unlit/VertexColorShader");
 
     }
 
     // Method to create a cube mesh with coloured vertices
-    Mesh CreateMountainMesh(List<Vector3> vertices)
+    private Mesh CreateMountainMesh(List<Vector3> vertices)
     {
         // Adapted from Tut1
-        Mesh m = new Mesh();
-        m.name = "Mountain";
+        Mesh m = new Mesh
+        {
+            name = "Mountain",
 
-        // Define the vertices. These are the "points" in 3D space that allow us to
-        // construct 3D geometry (by connecting groups of 3 points into triangles).
-        m.vertices = vertices.ToArray();
+            // Define the vertices. These are the "points" in 3D space that allow us to
+            // construct 3D geometry (by connecting groups of 3 points into triangles).
+            vertices = vertices.ToArray()
+        };
 
         // Define the vertex colours
         Color[] colors = new Color[m.vertices.Length];
@@ -52,7 +56,7 @@ public class CreateMountainPlane : MonoBehaviour {
         for (int i = 0; i < m.vertices.Length; i++)
         {
             triangles[i] = i;
-            float c = 0.5f * (m.vertices[i].y + variance);
+            float c = (m.vertices[i].y);
             colors[i] = new Color(c, c, c, 1.0f);
         }
 
@@ -62,74 +66,136 @@ public class CreateMountainPlane : MonoBehaviour {
         return m;
     }
 
-    List<Vector3> diamondSquare(int nIterations, Vector3 tl, Vector3 tr, Vector3 bl, Vector3 br) {
-        Vector3 mm = diamond(tl, tr, bl, br);
-        Vector3 ml = square(mm, tl, bl);
-        Vector3 mr = square(mm, tr, br);
-        Vector3 tm = square(mm, tl, tr);
-        Vector3 bm = square(mm, bl, br);
-        if (nIterations == 1) {
-            List<Vector3> res = new List<Vector3>();
-            res.Add(tl);
-            res.Add(tm);
-            res.Add(mm);
+    private List<Vector3> GenTriangles(float[,] ys, float size) {
+        List<Vector3> vertices = new List<Vector3>();
+        float increment = size / ys.GetLength(0);
 
-            res.Add(tl);
-            res.Add(mm);
-            res.Add(ml);
-
-            res.Add(tm);
-            res.Add(tr);
-            res.Add(mr);
-
-            res.Add(tm);
-            res.Add(mr);
-            res.Add(mm);
-
-            res.Add(ml);
-            res.Add(mm);
-            res.Add(bm);
-
-            res.Add(ml);
-            res.Add(bm);
-            res.Add(bl);
-
-            res.Add(mm);
-            res.Add(mr);
-            res.Add(br);
-
-            res.Add(mm);
-            res.Add(br);
-            res.Add(bm);
-
-            return res;
-        } else {
-            List<Vector3> res = diamondSquare(nIterations - 1, tl, tm, ml, mm);
-            res.AddRange(diamondSquare(nIterations - 1, ml, mm, bl, bm)); 
-            res.AddRange(diamondSquare(nIterations - 1, tm, tr, mm, mr));
-            res.AddRange(diamondSquare(nIterations - 1, mm, mr, bm, br));
-            return res;
+        for (int x = 0; x < ys.GetLength(0); x++)
+        {
+            for (int z = 0; z < ys.GetLength(0); z++)
+            {
+                if ((x + 1 < ys.GetLength(0)) && (z - 1 >= 0))
+                {
+                    vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
+                    vertices.Add(new Vector3((x+1) * increment, ys[x+1, z], z * increment));
+                    vertices.Add(new Vector3(x * increment, ys[x, z-1], (z-1) * increment));
+                }
+                if ((x - 1 >= 0) && (z - 1 >= 0)) {
+                    vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
+                    vertices.Add(new Vector3(x * increment, ys[x, z-1], (z - 1) * increment));
+                    vertices.Add(new Vector3((x - 1) * increment, ys[x-1, z-1], (z - 1) * increment));
+                }
+            }
         }
+
+        return vertices;
     }
 
-    Vector3 square(Vector3 middle, Vector3 other1, Vector3 other2) {
-        if (Mathf.Abs(other1.z - other2.z) < 0.00001) {
-            return new Vector3((other1.x + other2.x) / 2, avgRandom(middle, other1, other2), other1.z);
-        } else {
-            return new Vector3(other1.x, avgRandom(middle, other1, other2), (other1.z + other2.z) / 2);
+    private float[,] DiamondSquare(int iterations)
+    {
+        int maxIndex = Power(2, iterations);
+        float[,] ys = new float[maxIndex+1, maxIndex+1];
+
+
+
+        // generate corners
+        ys[0, 0] = Random.Range(-variance, variance);
+        ys[maxIndex, 0] = Random.Range(-variance,variance);
+        ys[0, maxIndex] = Random.Range(-variance, variance);
+        ys[maxIndex, maxIndex] = Random.Range(-variance, variance);
+
+        actualVariance = variance;
+
+        for (int currSize = maxIndex; currSize > 1; currSize /= 2) {
+
+            int half = currSize / 2;
+
+            // diamond step
+            for (int x = half; x < maxIndex; x += currSize)
+            {
+                for (int z = half; z < maxIndex; z += currSize)
+                {
+                    ys[x, z] = Diamond(x, z, half, ys);
+                }
+            }
+
+            // square step
+            int startz = half;
+            for (int x = 0; x <= maxIndex; x += half)
+            {
+                for (int z = startz; z <= maxIndex; z += currSize)
+                {
+                    ys[x, z] = Square(x, z, half, ys);
+                }
+
+                startz = (startz + half) % currSize;
+            }
+            actualVariance /= 2;
         }
+
+        return ys;
     }
 
-    Vector3 diamond(Vector3 tl, Vector3 tr, Vector3 bl, Vector3 br) {
-        return new Vector3((tr.x + tl.x) / 2, avgRandom(tl, tr, bl, br), (tr.z + br.z) / 2);
+
+
+    float Square(int x, int z, int half, float[,] ys)
+    {
+        List<float> relevantYs = new List<float>();
+        if (z - half >= 0)
+        {
+            // append north
+            relevantYs.Add(ys[x, z - half]);
+        }
+        if (z + half < ys.GetLength(0))
+        {
+            // append south
+            relevantYs.Add(ys[x, z + half]);
+        }
+        if (x - half >= 0)
+        {
+            // append west
+            relevantYs.Add(ys[x - half, z]);
+        }
+        if (x + half < ys.GetLength(0))
+        {
+            // append east
+            relevantYs.Add(ys[x + half, z]);
+        }
+        print(relevantYs.Count);
+        return AvgRandom(relevantYs);
     }
 
-    float avgRandom(params Vector3[] inputs) {
+    float Diamond(int x, int z, int half, float[,] ys) {
+        List<float> relevantYs = new List<float>
+        {
+            // add NW
+            ys[x - half, z - half],
+            // add NE
+            ys[x + half, z - half],
+            // add SW
+            ys[x - half, z + half],
+            // add SE
+            ys[x + half, z + half]
+        };
+        return AvgRandom(relevantYs);
+    }
+
+    float AvgRandom(List<float> inputs) {
         float tot = 0.0f;
-        foreach (Vector3 input in inputs) {
-            tot += input.y;
+        foreach (float input in inputs) {
+            tot += input;
         }
-        return tot / inputs.Length + Random.Range(-variance, variance);
+        return tot / inputs.Count + Random.Range(-actualVariance, actualVariance);
+    }
+
+    int Power(int b, int e)
+    {
+        int res = 1;
+        for (int i = 0; i < e; i++)
+        {
+            res *= b;
+        }
+        return res;
     }
 }
 
