@@ -379,5 +379,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sideLength: 1
-  variance: 0.5
+  variance: 0.25
   nIterations: 6

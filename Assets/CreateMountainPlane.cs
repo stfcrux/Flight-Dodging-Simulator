@@ -5,61 +5,49 @@ public class CreateMountainPlane : MonoBehaviour
 {
 
     public float sideLength;
-    public float variance;
-    private float actualVariance;
+    public float roughness;
+    public float initialHeightRange;
     public int nIterations;
 
 
-    // Use this for initialization
     void Start()
     {
+        // generate height maps
         float[,] ys = DiamondSquare(nIterations);
-        for (int x = 0; x < ys.GetLength(0); x++)
-        {
-            for (int z = 0; z < ys.GetLength(0); z++)
-            {
-            }
-        }
+
+        // generate triangle verticies from the heightmap
         List<Vector3> vertices = GenTriangles(ys, sideLength);
-        // From Tut1
 
-        // Add a MeshFilter component to this entity. This essentially comprises of a
-        // mesh definition, which in this example is a collection of vertices, colours 
-        // and triangles (groups of three vertices). 
-        MeshFilter cubeMesh = this.gameObject.AddComponent<MeshFilter>();
-        cubeMesh.mesh = this.CreateMountainMesh(vertices);
+        // create the mesh
+        MeshFilter mountainMesh = this.gameObject.AddComponent<MeshFilter>();
+        mountainMesh.mesh = this.CreateMountainMesh(vertices);
 
-        // Add a MeshRenderer component. This component actually renders the mesh that
-        // is defined by the MeshFilter component.
-        this.gameObject.AddComponent<MeshRenderer>().material.shader = Shader.Find("Unlit/VertexColorShader");
-
+        // set the shader on the game object
+        this.gameObject.AddComponent<MeshRenderer>().material.shader =
+                Shader.Find("Unlit/VertexColorShader");
     }
 
-    // Method to create a cube mesh with coloured vertices
     private Mesh CreateMountainMesh(List<Vector3> vertices)
     {
-        // Adapted from Tut1
         Mesh m = new Mesh
         {
             name = "Mountain",
-
-            // Define the vertices. These are the "points" in 3D space that allow us to
-            // construct 3D geometry (by connecting groups of 3 points into triangles).
             vertices = vertices.ToArray()
         };
 
-        // Define the vertex colours
         Color[] colors = new Color[m.vertices.Length];
-
-        // Automatically define the triangles based on the number of vertices
         int[] triangles = new int[m.vertices.Length];
+
+        // assign the triangles and the color for each vertex
         for (int i = 0; i < m.vertices.Length; i++)
         {
             triangles[i] = i;
+            // TODO: don't use this simple colouring
             float c = (m.vertices[i].y);
             colors[i] = new Color(c, c, c, 1.0f);
         }
 
+        // copy the traingles and colors to the mesh
         m.triangles = triangles;
         m.colors = colors;
 
@@ -68,18 +56,21 @@ public class CreateMountainPlane : MonoBehaviour
 
     private List<Vector3> GenTriangles(float[,] ys, float size) {
         List<Vector3> vertices = new List<Vector3>();
+        // determine the x and z increment using the square sidelength
         float increment = size / ys.GetLength(0);
 
         for (int x = 0; x < ys.GetLength(0); x++)
         {
             for (int z = 0; z < ys.GetLength(0); z++)
             {
+                // create a top left triangle if possible
                 if ((x + 1 < ys.GetLength(0)) && (z - 1 >= 0))
                 {
                     vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
                     vertices.Add(new Vector3((x+1) * increment, ys[x+1, z], z * increment));
                     vertices.Add(new Vector3(x * increment, ys[x, z-1], (z-1) * increment));
                 }
+                // create a bottom right triangle if possible
                 if ((x - 1 >= 0) && (z - 1 >= 0)) {
                     vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
                     vertices.Add(new Vector3(x * increment, ys[x, z-1], (z - 1) * increment));
@@ -96,17 +87,18 @@ public class CreateMountainPlane : MonoBehaviour
         int maxIndex = Power(2, iterations);
         float[,] ys = new float[maxIndex+1, maxIndex+1];
 
+        float range = initialHeightRange;
 
-
-        // generate corners
-        ys[0, 0] = Random.Range(-variance, variance);
-        ys[maxIndex, 0] = Random.Range(-variance,variance);
-        ys[0, maxIndex] = Random.Range(-variance, variance);
-        ys[maxIndex, maxIndex] = Random.Range(-variance, variance);
-
-        actualVariance = variance;
+        // generate corners randomnly
+        ys[0, 0] = Random.Range(-range, range);
+        ys[maxIndex, 0] = Random.Range(-range,range);
+        ys[0, maxIndex] = Random.Range(-range, range);
+        ys[maxIndex, maxIndex] = Random.Range(-range, range);
 
         for (int currSize = maxIndex; currSize > 1; currSize /= 2) {
+            // reduce the range at each iteration to stop the surface from
+            // looking jaggad
+            range = (range / 2) * roughness;
 
             int half = currSize / 2;
 
@@ -115,7 +107,7 @@ public class CreateMountainPlane : MonoBehaviour
             {
                 for (int z = half; z < maxIndex; z += currSize)
                 {
-                    ys[x, z] = Diamond(x, z, half, ys);
+                    ys[x, z] = Diamond(x, z, half, ys, range);
                 }
             }
 
@@ -125,12 +117,11 @@ public class CreateMountainPlane : MonoBehaviour
             {
                 for (int z = startz; z <= maxIndex; z += currSize)
                 {
-                    ys[x, z] = Square(x, z, half, ys);
+                    ys[x, z] = Square(x, z, half, ys, range);
                 }
 
                 startz = (startz + half) % currSize;
             }
-            actualVariance /= 2;
         }
 
         return ys;
@@ -138,7 +129,7 @@ public class CreateMountainPlane : MonoBehaviour
 
 
 
-    float Square(int x, int z, int half, float[,] ys)
+    float Square(int x, int z, int half, float[,] ys, float range)
     {
         List<float> relevantYs = new List<float>();
         if (z - half >= 0)
@@ -161,11 +152,10 @@ public class CreateMountainPlane : MonoBehaviour
             // append east
             relevantYs.Add(ys[x + half, z]);
         }
-        print(relevantYs.Count);
-        return AvgRandom(relevantYs);
+        return AvgRandom(relevantYs, range);
     }
 
-    float Diamond(int x, int z, int half, float[,] ys) {
+    float Diamond(int x, int z, int half, float[,] ys, float range) {
         List<float> relevantYs = new List<float>
         {
             // add NW
@@ -177,15 +167,15 @@ public class CreateMountainPlane : MonoBehaviour
             // add SE
             ys[x + half, z + half]
         };
-        return AvgRandom(relevantYs);
+        return AvgRandom(relevantYs, range);
     }
 
-    float AvgRandom(List<float> inputs) {
+    float AvgRandom(List<float> inputs, float range) {
         float tot = 0.0f;
         foreach (float input in inputs) {
             tot += input;
         }
-        return tot / inputs.Count + Random.Range(-actualVariance, actualVariance);
+        return tot / inputs.Count + Random.Range(-range, range);
     }
 
     int Power(int b, int e)
