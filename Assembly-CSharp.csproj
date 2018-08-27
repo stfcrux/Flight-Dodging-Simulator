@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CreateMountainPlane.cs" />
+    <None Include="Assets\WaveShader.shader" />
     <None Include="Assets\VertexColorShader.shader" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>/Users/trent/Developer/Unity/Project1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

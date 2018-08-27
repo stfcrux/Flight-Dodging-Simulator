@@ -1,15 +1,16 @@
 ﻿<Properties StartupConfiguration="{75AC4C40-F16B-156B-5A80-9157E3301C82}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CreateMountainPlane.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/WaveShader.shader">
     <Files>
-      <File FileName="Assets/CreateMountainPlane.cs" Line="19" Column="63" />
+      <File FileName="Assets/WaveShader.shader" Line="20" Column="14" />
+      <File FileName="Assets/VertexColorShader.shader" Line="43" Column="8" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Project1" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="CreateMountainPlane.cs" selected="True" />
+              <Node name="WaveShader.shader" selected="True" />
             </Node>
           </Node>
         </State>
