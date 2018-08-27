@@ -8,6 +8,19 @@ public class CreateMountainPlane : MonoBehaviour
     public float roughness;
     public float initialHeightRange;
     public int nIterations;
+    public bool randomizeCorners;
+    public float grassStartingHeight;
+    public float rockStartingHeight;
+    public float snowStartHeight;
+
+    private Color MOUNTAIN_GRASS = 
+        new Color(187.0f/255, 217.0f/255, 95.0f/255, 1.0f);
+    private Color MOUNTAIN_SNOW =
+        new Color(230.0f / 255, 240.0f/255, 239.0f/255, 1.0f);
+    private Color MOUNTAIN_ROCK =
+        new Color(110.0f / 255, 117.0f / 255, 146.0f / 255, 1.0f);
+    private Color MOUNTAIN_SAND =
+        new Color(240.0f / 255, 222.0f / 255, 180.0f / 255, 1.0f);
 
 
     void Start()
@@ -42,9 +55,16 @@ public class CreateMountainPlane : MonoBehaviour
         for (int i = 0; i < m.vertices.Length; i++)
         {
             triangles[i] = i;
-            // TODO: don't use this simple colouring
-            float c = (m.vertices[i].y);
-            colors[i] = new Color(c, c, c, 1.0f);
+            float height = vertices[i].y;
+            if (height < grassStartingHeight) {
+                colors[i] = MOUNTAIN_SAND;
+            } else if (height < rockStartingHeight) {
+                colors[i] = MOUNTAIN_GRASS;
+            } else if (height < snowStartHeight) {
+                colors[i] = MOUNTAIN_ROCK;
+            } else {
+                colors[i] = MOUNTAIN_SNOW;
+            }
         }
 
         // copy the traingles and colors to the mesh
@@ -90,15 +110,15 @@ public class CreateMountainPlane : MonoBehaviour
         float range = initialHeightRange;
 
         // generate corners randomnly
-        ys[0, 0] = Random.Range(-range, range);
-        ys[maxIndex, 0] = Random.Range(-range,range);
-        ys[0, maxIndex] = Random.Range(-range, range);
-        ys[maxIndex, maxIndex] = Random.Range(-range, range);
+        if (randomizeCorners)
+        {
+            ys[0, 0] = Random.Range(-range, range);
+            ys[maxIndex, 0] = Random.Range(-range, range);
+            ys[0, maxIndex] = Random.Range(-range, range);
+            ys[maxIndex, maxIndex] = Random.Range(-range, range);
+        }
 
         for (int currSize = maxIndex; currSize > 1; currSize /= 2) {
-            // reduce the range at each iteration to stop the surface from
-            // looking jaggad
-            range = (range / 2) * roughness;
 
             int half = currSize / 2;
 
@@ -122,6 +142,10 @@ public class CreateMountainPlane : MonoBehaviour
 
                 startz = (startz + half) % currSize;
             }
+
+            // reduce the range at each iteration to stop the surface from
+            // looking jaggad
+            range = (range / 2) * roughness;
         }
 
         return ys;
