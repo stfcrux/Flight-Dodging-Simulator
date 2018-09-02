@@ -12,6 +12,7 @@ public class CreateMountainPlane : MonoBehaviour
     public float grassStartingHeight;
     public float rockStartingHeight;
     public float snowStartHeight;
+    public PointLight pointLight;
 
     private Color MOUNTAIN_GRASS = 
         new Color(187.0f/255, 217.0f/255, 95.0f/255, 1.0f);
@@ -37,7 +38,22 @@ public class CreateMountainPlane : MonoBehaviour
 
         // set the shader on the game object
         this.gameObject.AddComponent<MeshRenderer>().material.shader =
-                Shader.Find("Unlit/VertexColorShader");
+                Shader.Find("Unlit/PhongShader");
+    }
+
+    // Called each frame
+    void Update()
+    {
+
+        // Update point light (sun)
+        pointLight.Update();
+
+        // Get renderer component (in order to pass params to shader)
+        MeshRenderer renderer = this.gameObject.GetComponent<MeshRenderer>();
+
+        // Pass updated light positions to shader
+        renderer.material.SetColor("_PointLightColor", this.pointLight.color);
+        renderer.material.SetVector("_PointLightPosition", this.pointLight.GetWorldPosition());
     }
 
     private Mesh CreateMountainMesh(List<Vector3> vertices)

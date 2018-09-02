@@ -24,7 +24,7 @@
 
 //UNITY_SHADER_NO_UPGRADE
 
-Shader "Unlit/WaveShader"
+Shader "Unlit/PhongShader"
 {
 	Properties
 	{
@@ -36,12 +36,12 @@ Shader "Unlit/WaveShader"
 		Pass
 	{
 		CGPROGRAM
-	#pragma vertex vert
-	#pragma fragment frag
+#pragma vertex vert
+#pragma fragment frag
 
-	#include "UnityCG.cginc"
+#include "UnityCG.cginc"
 
-	uniform float3 _PointLightColor;
+		uniform float3 _PointLightColor;
 	uniform float3 _PointLightPosition;
 
 	struct vertIn
@@ -62,10 +62,9 @@ Shader "Unlit/WaveShader"
 	// Implementation of the vertex shader
 	vertOut vert(vertIn v)
 	{
-		
-		v.vertex.y += 0.03 * sin(10 * v.vertex.x + 2 * _Time.y);
+		vertOut o;
 
-	    vertOut o;
+
 		// Convert Vertex position and corresponding normal into world coords.
 		// Note that we have to multiply the normal by the transposed inverse of the world 
 		// transformation matrix (for cases where we have non-uniform scaling; we also don't
