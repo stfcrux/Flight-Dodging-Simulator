@@ -23,6 +23,9 @@ public class CreateMountainPlane : MonoBehaviour
     private Color MOUNTAIN_SAND =
         new Color(240.0f / 255, 222.0f / 255, 180.0f / 255, 1.0f);
 
+    private List<Vector3> vertices;
+    private List<Vector3> normals;
+
 
     void Start()
     {
@@ -30,7 +33,7 @@ public class CreateMountainPlane : MonoBehaviour
         float[,] ys = DiamondSquare(nIterations);
 
         // generate triangle verticies from the heightmap
-        List<Vector3> vertices = GenTriangles(ys, sideLength);
+        SetTriangles(ys, sideLength);
 
         // create the mesh
         MeshFilter mountainMesh = this.gameObject.AddComponent<MeshFilter>();
@@ -81,17 +84,21 @@ public class CreateMountainPlane : MonoBehaviour
             } else {
                 colors[i] = MOUNTAIN_SNOW;
             }
+
         }
 
         // copy the traingles and colors to the mesh
         m.triangles = triangles;
         m.colors = colors;
+        m.normals = normals.ToArray();
 
         return m;
     }
 
-    private List<Vector3> GenTriangles(float[,] ys, float size) {
-        List<Vector3> vertices = new List<Vector3>();
+    private void SetTriangles(float[,] ys, float size) {
+        vertices = new List<Vector3>();
+        normals = new List<Vector3>();
+
         // determine the x and z increment using the square sidelength
         float increment = size / ys.GetLength(0);
 
@@ -102,20 +109,36 @@ public class CreateMountainPlane : MonoBehaviour
                 // create a top left triangle if possible
                 if ((x + 1 < ys.GetLength(0)) && (z - 1 >= 0))
                 {
-                    vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
-                    vertices.Add(new Vector3((x+1) * increment, ys[x+1, z], z * increment));
-                    vertices.Add(new Vector3(x * increment, ys[x, z-1], (z-1) * increment));
+                    Vector3 v1 = new Vector3(x * increment, ys[x, z], z * increment);
+                    Vector3 v2 = new Vector3((x + 1) * increment, ys[x + 1, z], z * increment);
+                    Vector3 v3 = new Vector3(x * increment, ys[x, z - 1], (z - 1) * increment);
+                    vertices.Add(v1);
+                    vertices.Add(v2);
+                    vertices.Add(v3);
+
+
+
+                    // define the normals to be the cross product of two vertices
+                    normals.Add(Vector3.Cross(v2 - v1, v3 - v1));
+                    normals.Add(normals[normals.Count-1]);
+                    normals.Add(normals[normals.Count-1]);
                 }
                 // create a bottom right triangle if possible
                 if ((x - 1 >= 0) && (z - 1 >= 0)) {
-                    vertices.Add(new Vector3(x * increment, ys[x, z], z * increment));
-                    vertices.Add(new Vector3(x * increment, ys[x, z-1], (z - 1) * increment));
-                    vertices.Add(new Vector3((x - 1) * increment, ys[x-1, z-1], (z - 1) * increment));
+                    Vector3 v1 = new Vector3(x * increment, ys[x, z], z * increment);
+                    Vector3 v2 = new Vector3(x * increment, ys[x, z-1], (z - 1) * increment);
+                    Vector3 v3 = new Vector3((x - 1) * increment, ys[x-1, z-1], (z - 1) * increment);
+                    vertices.Add(v1);
+                    vertices.Add(v2);
+                    vertices.Add(v3);
+
+                    // define the normals to be the cross product of two vertices
+                    normals.Add(Vector3.Cross(v2 - v1, v3 - v1));
+                    normals.Add(normals[normals.Count - 1]);
+                    normals.Add(normals[normals.Count - 1]);
                 }
             }
         }
-
-        return vertices;
     }
 
     private float[,] DiamondSquare(int iterations)

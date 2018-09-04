@@ -1,10 +1,6 @@
 ﻿<Properties StartupConfiguration="{75AC4C40-F16B-156B-5A80-9157E3301C82}|">
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/WaveShader.shader">
-    <Files>
-      <File FileName="Assets/WaveShader.shader" Line="20" Column="14" />
-      <File FileName="Assets/VertexColorShader.shader" Line="43" Column="8" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">

@@ -63,7 +63,7 @@ Shader "Unlit/WaveShader"
 	vertOut vert(vertIn v)
 	{
 		
-		v.vertex.y += 0.03 * sin(10 * v.vertex.x + 2 * _Time.y);
+		v.vertex.y += 0.1 * sin(10 * v.vertex.x + 2 * _Time.y);
 
 	    vertOut o;
 		// Convert Vertex position and corresponding normal into world coords.

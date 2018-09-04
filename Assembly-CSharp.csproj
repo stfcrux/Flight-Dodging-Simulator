@@ -60,13 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\CreateMountainPlane.cs" />
+    <Compile Include="Assets\PointLight.cs" />
+    <Compile Include="Assets\SunRotation.cs" />
+    <Compile Include="Assets\Water.cs" />
     <None Include="Assets\WaveShader.shader" />
-    <None Include="Assets\VertexColorShader.shader" />
+    <None Include="Assets\PhongShader.shader" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>/Users/trent/Developer/Unity/Project1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>/Users/trent/Developer/COMP30019/Project1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>/Users/trent/Developer/Unity/Project1/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>/Users/trent/Developer/COMP30019/Project1/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
