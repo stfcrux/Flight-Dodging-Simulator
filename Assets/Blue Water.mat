@@ -62,6 +62,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Ka: 0.3
+    - _Kd: 0.8
+    - _Ks: 0.3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -71,8 +74,11 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
+    - _fAtt: 1
+    - _specN: 1
     m_Colors:
     - _Color: {r: 0.43867922, g: 0.9048645, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightPosition: {r: 0, g: 0, b: 0, a: 1}
+    - _WaterColor: {r: 0.10849059, g: 0.72015905, b: 1, a: 1}

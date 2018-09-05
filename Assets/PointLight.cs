@@ -6,12 +6,12 @@ public class PointLight : MonoBehaviour
 {
 
     public Color color;
+    public int multiplier;
 
     // Rotation will be used as a speed element for the rotation (aka sunsetting and rising)
     private float rotation;
 
     // Multiplier value to modify rotation speed!
-    private static int multiplier = 10;
 
     public Vector3 GetWorldPosition()
     {

@@ -73,7 +73,7 @@ public class CreateMountainPlane : MonoBehaviour
         // assign the triangles and the color for each vertex
         for (int i = 0; i < m.vertices.Length; i++)
         {
-            triangles[i] = i;
+            triangles[i] = vertices.IndexOf(vertices[i]);
             float height = vertices[i].y;
             if (height < grassStartingHeight) {
                 colors[i] = MOUNTAIN_SAND;
@@ -122,6 +122,7 @@ public class CreateMountainPlane : MonoBehaviour
                     normals.Add(Vector3.Cross(v2 - v1, v3 - v1));
                     normals.Add(normals[normals.Count-1]);
                     normals.Add(normals[normals.Count-1]);
+
                 }
                 // create a bottom right triangle if possible
                 if ((x - 1 >= 0) && (z - 1 >= 0)) {
