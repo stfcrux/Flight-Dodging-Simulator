@@ -1,3 +1,10 @@
+/*
+ * Graphics and Interaction (COMP30019) Project 1
+ * Team: Trent Branson and Jin Wei Loh
+ * Code adapted from COMP30019: Workshop 2
+ * Movement of the sun, based on origin
+ */
+
 using UnityEngine;
 using System.Collections;
 

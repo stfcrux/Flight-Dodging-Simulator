@@ -21,11 +21,13 @@
 // Adapted for COMP30019 by Jeremy Nicholson, 10 Sep 2012
 // Adapted further by Chris Ewin, 23 Sep 2013
 // Adapted further (again) by Alex Zable (port to Unity), 19 Aug 2016
+// Adapted further by Trent Branson & Jin Wei Loh, 2018
 
 //UNITY_SHADER_NO_UPGRADE
 
 Shader "Unlit/PhongShader"
-{
+{   
+    // lighting values to get optimal shading 
     Properties
     {
         _PointLightColor("Point Light Color", Color) = (0, 0, 0)
