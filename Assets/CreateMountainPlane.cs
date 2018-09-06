@@ -8,7 +8,8 @@ public class CreateMountainPlane : MonoBehaviour
     public float roughness;
     public float initialHeightRange;
     public int nIterations;
-    public bool randomizeCorners;
+    public float cornerRandomRange;
+    public bool standardizePlaneHeight;
     public float grassStartingHeight;
     public float rockStartingHeight;
     public float snowStartHeight;
@@ -31,6 +32,27 @@ public class CreateMountainPlane : MonoBehaviour
     {
         // generate height maps
         float[,] ys = DiamondSquare(nIterations);
+        if (standardizePlaneHeight) {
+            // get avg
+            float tot = 0;
+            for (int x = 0; x < ys.GetLength(0); x++)
+            {
+                for (int z = 0; z < ys.GetLength(0); z++)
+                {
+                    tot += ys[x, z];
+                }
+            }
+
+            float avg = tot / ys.Length;
+            print(avg);
+            for (int x = 0; x < ys.GetLength(0); x++)
+            {
+                for (int z = 0; z < ys.GetLength(0); z++)
+                {
+                    ys[x, z] -= avg;
+                }
+            }
+        }
 
         // generate triangle verticies from the heightmap
         SetTriangles(ys);
@@ -157,13 +179,10 @@ public class CreateMountainPlane : MonoBehaviour
         float range = initialHeightRange;
 
         // generate corners randomnly
-        if (randomizeCorners)
-        {
-            ys[0, 0] = Random.Range(-range, range);
-            ys[maxIndex, 0] = Random.Range(-range, range);
-            ys[0, maxIndex] = Random.Range(-range, range);
-            ys[maxIndex, maxIndex] = Random.Range(-range, range);
-        }
+        ys[0, 0] = Random.Range(-cornerRandomRange, cornerRandomRange);
+        ys[maxIndex, 0] = Random.Range(-cornerRandomRange, cornerRandomRange);
+        ys[0, maxIndex] = Random.Range(-cornerRandomRange, cornerRandomRange);
+        ys[maxIndex, maxIndex] = Random.Range(-cornerRandomRange, cornerRandomRange);
 
         for (int currSize = maxIndex; currSize > 1; currSize /= 2)
         {

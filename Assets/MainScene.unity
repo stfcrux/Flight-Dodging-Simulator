@@ -275,9 +275,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sideLength: 1
   roughness: 0.6
-  initialHeightRange: 0.8
+  initialHeightRange: 1
   nIterations: 6
-  randomizeCorners: 0
+  cornerRandomRange: 0.3
+  standardizePlaneHeight: 1
   grassStartingHeight: 0.1
   rockStartingHeight: 0.35
   snowStartHeight: 0.4
