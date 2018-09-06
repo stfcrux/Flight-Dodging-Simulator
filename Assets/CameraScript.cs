@@ -22,7 +22,7 @@ public class CameraScript : MonoBehaviour {
         speed = 5;
         rotationSpeed = 2;
         // setting initial camera rotation
-        this.transform.localRotation = Quaternion.Euler(20.0f, 0.0f, 0.0f);
+        this.transform.localRotation = Quaternion.Euler(60.0f, 0.0f, 0.0f);
         // setting initial camera position
         this.transform.localPosition = new Vector3(0.0f, 10.0f, -4f);
 
