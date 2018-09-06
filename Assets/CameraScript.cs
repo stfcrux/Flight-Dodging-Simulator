@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,13 +9,13 @@ public class CameraScript : MonoBehaviour {
     public float boundSize = 5;
     public float skyBoundSize = 30;
     private float gap = 1f; // gap for detecting camera out of bound
-    private CreateMountainPlane planeObject; // reference to mountatin plane
+    public CreateMountainPlane planeObject; // reference to mountatin plane
 
 
     // Use this for initialization
     void Start () {
 
-        speed = 1;
+        speed = 5;
         rotationSpeed = 100;
         // setting initial camera rotation
         this.transform.localRotation = Quaternion.Euler(20.0f, 0.0f, 0.0f);
@@ -27,6 +27,13 @@ public class CameraScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        // implementation of physics objects to check if there is anything infront for the
+        // four translations
+        Ray forward = new Ray(transform.position, transform.forward);
+        Ray right = new Ray(transform.position, transform.right);
+        Ray back = new Ray(transform.position, -transform.forward);
+        Ray left = new Ray(transform.position, -transform.right);
 
         Quaternion delta = Quaternion.identity;
         // Pitch
@@ -40,24 +47,25 @@ public class CameraScript : MonoBehaviour {
 
         transform.rotation *= delta;
 
-        // Movement
-        if (Input.GetKey(KeyCode.W))
+        // Movement, in the case of object colliding with something in that direction, it does not move
+        if (Input.GetKey(KeyCode.W) && !Physics.SphereCast(forward, 0.5f, 1.0f))
         {
             transform.position += transform.rotation * new Vector3(0, 0, speed) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && !Physics.SphereCast(left, 0.5f, 1.0f))
         {
             transform.position += transform.rotation * new Vector3(-speed, 0, 0) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) && !Physics.SphereCast(back, 0.5f, 1.0f))
         {
             transform.position += transform.rotation * new Vector3(0, 0, -speed) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && !Physics.SphereCast(right, 0.5f, 1.0f))
         {
             transform.position += transform.rotation * new Vector3(speed, 0, 0) * Time.deltaTime;
         }
 
+        // restricting movement out of bounds of the map
         restrictMovement();
 
     }
