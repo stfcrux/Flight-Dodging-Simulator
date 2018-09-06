@@ -44,6 +44,10 @@ public class CreateMountainPlane : MonoBehaviour
 
         meshRenderer.material.shader =
                 Shader.Find("Unlit/PhongShader");
+                
+        // Add MeshCollider for mesh object to avoid camera object
+        gameObject.AddComponent<MeshCollider>();
+        
     }
 
     // Called each frame
