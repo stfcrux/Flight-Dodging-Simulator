@@ -101,6 +101,10 @@ public class CameraScript : MonoBehaviour {
         }
 
         transform.position = currentPosition;
+	    
+	//Avoid forces to be applied to camera
+        rigid.angularVelocity = Vector3.zero; 
+        rigid.velocity = Vector3.zero; 
 
 
     }
