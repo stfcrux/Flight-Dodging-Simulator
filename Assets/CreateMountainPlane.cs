@@ -109,7 +109,6 @@ public class CreateMountainPlane : MonoBehaviour
     private void SetTriangles(float[,] ys)
     {
         int ss = ys.GetLength(0);
-        print(ss);
         vertices = new Vector3[ss * ss];
         triangles = new int[(ys.Length - ss - 1) * 2 * 3];
 
@@ -145,11 +144,8 @@ public class CreateMountainPlane : MonoBehaviour
                 continue;
             }
             triangles[i++] = j;
-            print(triangles[i - 1]);
             triangles[i++] = j + ss;
-            print(triangles[i - 1]);
             triangles[i++] = j + ss - 1;
-            print(triangles[i - 1]);
         }
     }
 

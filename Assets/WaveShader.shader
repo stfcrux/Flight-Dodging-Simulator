@@ -31,18 +31,18 @@ Shader "Unlit/WaveShader"
     {
         _PointLightColor("Point Light Color", Color) = (0, 0, 0)
         _PointLightPosition("Point Light Position", Vector) = (0.0, 0.0, 0.0)
-        _WaterColor("Water Color", Color) = (0, 0, 1, 1)
+        _WaterColor("Water Color", Color) = (0.1367, 0.5208, 1, 1)
 
-        _normalSmoothness("Normal Smoothness", Float) = 0.1
-        _waveMagnitude("Wave Magnitude", Float) = 0.1
-        _xFrequency("x Frequency", Float) = 6
-        _zFrequency("y Frequency", Float) = 3
-        _timeFrequency("Time Frequency", Float) = 1.5
+        _normalSmoothness("Normal Smoothness", Float) = 0.2
+        _waveMagnitude("Wave Magnitude", Float) = 0.15
+        _xFrequency("x Frequency", Float) = 10
+        _zFrequency("y Frequency", Float) = 10
+        _timeFrequency("Time Frequency", Float) = 1
         _epsilon("Epsilon", Float) = 0.05
 
         _Ka("Ka", Float) = 0.3
-        _Ks("Ks", Float) = 0.3
-        _Kd("Kd", Float) = 0.8
+        _Ks("Ks", Float) = 0.5 
+        _Kd("Kd", Float) = 1
         _fAtt("fAtt", Float) = 1
         _specN("specN", Float) = 1
     }

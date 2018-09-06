@@ -31,7 +31,7 @@ Shader "Unlit/PhongShader"
         _PointLightColor("Point Light Color", Color) = (0, 0, 0)
         _PointLightPosition("Point Light Position", Vector) = (0.0, 0.0, 0.0)
 
-        _Ka("Ka", Float) = 0.8
+        _Ka("Ka", Float) = 1
         _Ks("Ks", Float) = 0.3
         _Kd("Kd", Float) = 0.8
         _fAtt("fAtt", Float) = 1
