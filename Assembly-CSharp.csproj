@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{75AC4C40-F16B-156B-5A80-9157E3301C82}</ProjectGuid>
+    <ProjectGuid>{163A1C7A-75B8-BDB1-1F9B-AC1DAF307DA0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -59,17 +59,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CameraScript.cs" />
     <Compile Include="Assets\CreateMountainPlane.cs" />
     <Compile Include="Assets\PointLight.cs" />
-    <Compile Include="Assets\SunRotation.cs" />
     <Compile Include="Assets\Water.cs" />
     <None Include="Assets\WaveShader.shader" />
     <None Include="Assets\PhongShader.shader" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>/Users/trent/Developer/COMP30019/Project1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>/Users/trent/Desktop/COMP30019-Project1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>/Users/trent/Developer/COMP30019/Project1/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>/Users/trent/Desktop/COMP30019-Project1/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>/Applications/Unity/Unity.app/Contents/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

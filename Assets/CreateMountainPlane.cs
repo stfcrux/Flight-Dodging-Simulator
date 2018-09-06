@@ -14,17 +14,17 @@ public class CreateMountainPlane : MonoBehaviour
     public float snowStartHeight;
     public PointLight pointLight;
 
-    private Color MOUNTAIN_GRASS = 
-        new Color(187.0f/255, 217.0f/255, 95.0f/255, 1.0f);
+    private Color MOUNTAIN_GRASS =
+        new Color(187.0f / 255, 217.0f / 255, 95.0f / 255, 1.0f);
     private Color MOUNTAIN_SNOW =
-        new Color(230.0f / 255, 240.0f/255, 239.0f/255, 1.0f);
+        new Color(230.0f / 255, 240.0f / 255, 239.0f / 255, 1.0f);
     private Color MOUNTAIN_ROCK =
         new Color(110.0f / 255, 117.0f / 255, 146.0f / 255, 1.0f);
     private Color MOUNTAIN_SAND =
         new Color(240.0f / 255, 222.0f / 255, 180.0f / 255, 1.0f);
 
-    private List<Vector3> vertices;
-    private List<Vector3> normals;
+    private Vector3[] vertices;
+    private int[] triangles;
 
 
     void Start()
@@ -33,14 +33,16 @@ public class CreateMountainPlane : MonoBehaviour
         float[,] ys = DiamondSquare(nIterations);
 
         // generate triangle verticies from the heightmap
-        SetTriangles(ys, sideLength);
+        SetTriangles(ys);
 
         // create the mesh
         MeshFilter mountainMesh = this.gameObject.AddComponent<MeshFilter>();
-        mountainMesh.mesh = this.CreateMountainMesh(vertices);
+        mountainMesh.mesh = this.CreateMountainMesh();
 
         // set the shader on the game object
-        this.gameObject.AddComponent<MeshRenderer>().material.shader =
+        MeshRenderer meshRenderer = this.gameObject.AddComponent<MeshRenderer>();
+
+        meshRenderer.material.shader =
                 Shader.Find("Unlit/PhongShader");
     }
 
@@ -59,93 +61,98 @@ public class CreateMountainPlane : MonoBehaviour
         renderer.material.SetVector("_PointLightPosition", this.pointLight.GetWorldPosition());
     }
 
-    private Mesh CreateMountainMesh(List<Vector3> vertices)
+    private Mesh CreateMountainMesh()
     {
         Mesh m = new Mesh
         {
             name = "Mountain",
-            vertices = vertices.ToArray()
+            vertices = vertices
         };
 
         Color[] colors = new Color[m.vertices.Length];
-        int[] triangles = new int[m.vertices.Length];
 
         // assign the triangles and the color for each vertex
         for (int i = 0; i < m.vertices.Length; i++)
         {
-            triangles[i] = vertices.IndexOf(vertices[i]);
             float height = vertices[i].y;
-            if (height < grassStartingHeight) {
+            if (height < grassStartingHeight)
+            {
                 colors[i] = MOUNTAIN_SAND;
-            } else if (height < rockStartingHeight) {
+            }
+            else if (height < rockStartingHeight)
+            {
                 colors[i] = MOUNTAIN_GRASS;
-            } else if (height < snowStartHeight) {
+            }
+            else if (height < snowStartHeight)
+            {
                 colors[i] = MOUNTAIN_ROCK;
-            } else {
+            }
+            else
+            {
                 colors[i] = MOUNTAIN_SNOW;
             }
 
         }
 
         // copy the traingles and colors to the mesh
-        m.triangles = triangles;
+        m.triangles = this.triangles;
         m.colors = colors;
-        m.normals = normals.ToArray();
+        m.RecalculateNormals();
 
         return m;
     }
 
-    private void SetTriangles(float[,] ys, float size) {
-        vertices = new List<Vector3>();
-        normals = new List<Vector3>();
+    private void SetTriangles(float[,] ys)
+    {
+        int ss = ys.GetLength(0);
+        print(ss);
+        vertices = new Vector3[ss * ss];
+        triangles = new int[(ys.Length - ss - 1) * 2 * 3];
 
         // determine the x and z increment using the square sidelength
-        float increment = size / ys.GetLength(0);
+        float increment = sideLength / (ys.GetLength(0) - 1);
 
+        int i = 0;
         for (int x = 0; x < ys.GetLength(0); x++)
         {
             for (int z = 0; z < ys.GetLength(0); z++)
             {
-                // create a top left triangle if possible
-                if ((x + 1 < ys.GetLength(0)) && (z - 1 >= 0))
-                {
-                    Vector3 v1 = new Vector3(x * increment, ys[x, z], z * increment);
-                    Vector3 v2 = new Vector3((x + 1) * increment, ys[x + 1, z], z * increment);
-                    Vector3 v3 = new Vector3(x * increment, ys[x, z - 1], (z - 1) * increment);
-                    vertices.Add(v1);
-                    vertices.Add(v2);
-                    vertices.Add(v3);
-
-
-
-                    // define the normals to be the cross product of two vertices
-                    normals.Add(Vector3.Cross(v2 - v1, v3 - v1));
-                    normals.Add(normals[normals.Count-1]);
-                    normals.Add(normals[normals.Count-1]);
-
-                }
-                // create a bottom right triangle if possible
-                if ((x - 1 >= 0) && (z - 1 >= 0)) {
-                    Vector3 v1 = new Vector3(x * increment, ys[x, z], z * increment);
-                    Vector3 v2 = new Vector3(x * increment, ys[x, z-1], (z - 1) * increment);
-                    Vector3 v3 = new Vector3((x - 1) * increment, ys[x-1, z-1], (z - 1) * increment);
-                    vertices.Add(v1);
-                    vertices.Add(v2);
-                    vertices.Add(v3);
-
-                    // define the normals to be the cross product of two vertices
-                    normals.Add(Vector3.Cross(v2 - v1, v3 - v1));
-                    normals.Add(normals[normals.Count - 1]);
-                    normals.Add(normals[normals.Count - 1]);
-                }
+                vertices[i++] = new Vector3(x * increment, ys[x, z], z * increment);
             }
+        }
+
+        // gen left triangles
+        i = 0;
+        for (int j = 0; j < ys.Length - ss - 1; j++)
+        {
+            if (j % ss == ss - 1)
+            {
+                continue;
+            }
+            triangles[i++] = j;
+            triangles[i++] = j + 1;
+            triangles[i++] = j + ss;
+        }
+        // gen right triangles
+        for (int j = 1; j < ys.Length - ss; j++)
+        {
+            if (j % ss == 0)
+            {
+                continue;
+            }
+            triangles[i++] = j;
+            print(triangles[i - 1]);
+            triangles[i++] = j + ss;
+            print(triangles[i - 1]);
+            triangles[i++] = j + ss - 1;
+            print(triangles[i - 1]);
         }
     }
 
     private float[,] DiamondSquare(int iterations)
     {
         int maxIndex = Power(2, iterations);
-        float[,] ys = new float[maxIndex+1, maxIndex+1];
+        float[,] ys = new float[maxIndex + 1, maxIndex + 1];
 
         float range = initialHeightRange;
 
@@ -158,7 +165,8 @@ public class CreateMountainPlane : MonoBehaviour
             ys[maxIndex, maxIndex] = Random.Range(-range, range);
         }
 
-        for (int currSize = maxIndex; currSize > 1; currSize /= 2) {
+        for (int currSize = maxIndex; currSize > 1; currSize /= 2)
+        {
 
             int half = currSize / 2;
 
@@ -219,7 +227,8 @@ public class CreateMountainPlane : MonoBehaviour
         return AvgRandom(relevantYs, range);
     }
 
-    float Diamond(int x, int z, int half, float[,] ys, float range) {
+    float Diamond(int x, int z, int half, float[,] ys, float range)
+    {
         List<float> relevantYs = new List<float>
         {
             // add NW
@@ -234,9 +243,11 @@ public class CreateMountainPlane : MonoBehaviour
         return AvgRandom(relevantYs, range);
     }
 
-    float AvgRandom(List<float> inputs, float range) {
+    float AvgRandom(List<float> inputs, float range)
+    {
         float tot = 0.0f;
-        foreach (float input in inputs) {
+        foreach (float input in inputs)
+        {
             tot += input;
         }
         return tot / inputs.Count + Random.Range(-range, range);
