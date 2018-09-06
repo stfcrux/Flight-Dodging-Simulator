@@ -9,9 +9,9 @@ public class CameraScript : MonoBehaviour {
     public float rotationSpeed; // the speed of rotation
     public float boundSize = 5;
     public float skyBoundSize = 20;
-    private float gap = 0.5f; // gap for detecting camera out of bound
+    private float gap = 0.5f; // offset for detecting if camera is out of bounds
     public CreateMountainPlane planeObject; // reference to mountatin plane
-    public Rigidbody rigid;
+    public Rigidbody rigid; // reference to rigid body to check for collisions
 
     float pitch;
     float yaw;
@@ -35,7 +35,7 @@ public class CameraScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        // Movement, in the case of object colliding with something in that direction, it does not move
+        // Movement based on w a s d keys
         if (Input.GetKey(KeyCode.W))
         {
             transform.position += transform.forward * speed * Time.deltaTime;
@@ -53,7 +53,7 @@ public class CameraScript : MonoBehaviour {
             transform.position += transform.right * speed * Time.deltaTime;
         }
 
-        //Changes pitch and yaw by moving mouse
+        //pitch and yaw to change with movement of mouse
         yaw += rotationSpeed * Input.GetAxis("Mouse X");
         pitch -= rotationSpeed * Input.GetAxis("Mouse Y");
 
@@ -67,7 +67,7 @@ public class CameraScript : MonoBehaviour {
 
     private void restrictMovement()
     {
-        //CreateMountainPlane planeObject = GameObject.Find("Mountain").GetComponent<CreateMountainPlane>();
+        
         Vector3 currentPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
         // Keep the camera inside the terrain's bounds
@@ -75,13 +75,13 @@ public class CameraScript : MonoBehaviour {
         {
             currentPosition.x = -boundSize + gap;
         }
+	if (currentPosition.x > boundSize - gap)
+        {
+            currentPosition.x = boundSize - gap;
+        }
         if (currentPosition.z < -boundSize + gap)
         {
             currentPosition.z = -boundSize + gap;
-        }
-        if (currentPosition.x > boundSize - gap)
-        {
-            currentPosition.x = boundSize - gap;
         }
         if (currentPosition.z > boundSize - gap)
         {
@@ -103,8 +103,9 @@ public class CameraScript : MonoBehaviour {
         transform.position = currentPosition;
 	    
 	//Avoid forces to be applied to camera
+	rigid.velocity = Vector3.zero;     
         rigid.angularVelocity = Vector3.zero; 
-        rigid.velocity = Vector3.zero; 
+        
 
 
     }
