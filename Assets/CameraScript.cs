@@ -15,8 +15,12 @@ public class CameraScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+
+        Cursor.lockState = CursorLockMode.Locked;
+
+
         speed = 5;
-        rotationSpeed = 100;
+        rotationSpeed = 2;
         // setting initial camera rotation
         this.transform.localRotation = Quaternion.Euler(20.0f, 0.0f, 0.0f);
         // setting initial camera position
@@ -38,29 +42,29 @@ public class CameraScript : MonoBehaviour {
         Quaternion delta = Quaternion.identity;
         // Pitch
         float pitch = Input.GetAxis("Mouse Y");
-        delta *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime * pitch,
+        delta *= Quaternion.AngleAxis(rotationSpeed * pitch,
                                       -Vector3.right);
         // Yaw
         float yaw = Input.GetAxis("Mouse X");
-        delta *= Quaternion.AngleAxis(rotationSpeed * Time.deltaTime * yaw,
+        delta *= Quaternion.AngleAxis(rotationSpeed * yaw,
                                                    Vector3.up);
 
         transform.rotation *= delta;
 
         // Movement, in the case of object colliding with something in that direction, it does not move
-        if (Input.GetKey(KeyCode.W) && !Physics.SphereCast(forward, 0.5f, 1.0f))
+        if (Input.GetKey(KeyCode.W) && !Physics.SphereCast(forward, gap, gap))
         {
             transform.position += transform.rotation * new Vector3(0, 0, speed) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.A) && !Physics.SphereCast(left, 0.5f, 1.0f))
+        if (Input.GetKey(KeyCode.A) && !Physics.SphereCast(left, gap, gap))
         {
             transform.position += transform.rotation * new Vector3(-speed, 0, 0) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.S) && !Physics.SphereCast(back, 0.5f, 1.0f))
+        if (Input.GetKey(KeyCode.S) && !Physics.SphereCast(back, gap, gap))
         {
             transform.position += transform.rotation * new Vector3(0, 0, -speed) * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.D) && !Physics.SphereCast(right, 0.5f, 1.0f))
+        if (Input.GetKey(KeyCode.D) && !Physics.SphereCast(right, gap, gap))
         {
             transform.position += transform.rotation * new Vector3(speed, 0, 0) * Time.deltaTime;
         }
@@ -110,4 +114,6 @@ public class CameraScript : MonoBehaviour {
 
 
     }
+
+
 }
