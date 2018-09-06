@@ -7,8 +7,8 @@ public class CameraScript : MonoBehaviour {
 
     public float speed; // the speed of flying bus
     public float rotationSpeed; // the speed of rotation
-    public float boundSize = 5;
-    public float skyBoundSize = 20;
+    public float boundSize = 5; // the length of our terrain is 10 so we take half
+    public float skyBoundSize = 25; // the top of where the camera can go to
     private float gap = 0.5f; // offset for detecting if camera is out of bounds
     public CreateMountainPlane planeObject; // reference to mountatin plane
     public Rigidbody rigid; // reference to rigid body to check for collisions
@@ -20,7 +20,8 @@ public class CameraScript : MonoBehaviour {
     void Start () {
 
         Cursor.lockState = CursorLockMode.Locked;
-
+	
+	//speed of movement
         speed = 5;
         rotationSpeed = 2;
         // setting initial camera rotation
@@ -38,19 +39,19 @@ public class CameraScript : MonoBehaviour {
         // Movement based on w a s d keys
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += transform.forward * speed * Time.deltaTime;
+            transform.position += transform.forward * Time.deltaTime * speed;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position += -transform.right * speed * Time.deltaTime;
+            transform.position += -transform.right * Time.deltaTime * speed;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position += -transform.forward * speed * Time.deltaTime;
+            transform.position += -transform.forward * Time.deltaTime * speed;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += transform.right * speed * Time.deltaTime;
+            transform.position += transform.right * Time.deltaTime * speed;
         }
 
         //pitch and yaw to change with movement of mouse
